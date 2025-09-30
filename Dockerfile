@@ -5,15 +5,14 @@ LABEL org.opencontainers.image.source https://github.com/GT-610/ip-derper
 
 # Set environment variables for build
 ENV CGO_ENABLED=0 \
-    GOOS=linux \
-    GOARCH=amd64
+    GOOS=linux
 
 WORKDIR /app
 
 # Install git needed for cloning
 
 # Only for China mainland users: Use mirror to download
-# RUN sed -i 's/deb.debian.org/mirrors.cernet.edu.cn/g' /etc/apt/sources.list.d/debian.sources
+# RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list.d/debian.sources
 
 RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
 
@@ -48,10 +47,9 @@ ENV DERP_VERIFY_CLIENTS false
 # Install only necessary packages
 
 # Only for China mainland users: Use mirror to download
-# RUN sed -i 's#https\?://dl-cdn.alpinelinux.org/alpine#https://mirrors.cernet.edu.cn/alpine#g' /etc/apk/repositories
+# RUN sed -i 's#https\?://dl-cdn.alpinelinux.org/alpine#https://mirrors.aliyun.com/alpine#g' /etc/apk/repositories
 
 RUN apk --no-cache add openssl \
-    # Clean up
     && rm -rf /var/cache/apk/*
 
 # Create certs directory
@@ -66,7 +64,7 @@ COPY --from=builder /app/derper /app/derper
 RUN chmod +x /app/derper /app/build_cert.sh
 
 # Build self-signed certs && start derper with enhanced security
-CMD sh /app/build_cert.sh $DERP_HOST $DERP_CERTS /app/cert.conf && \
+CMD /app/build_cert.sh $DERP_HOST $DERP_CERTS /app/cert.conf && \
     /app/derper --hostname=$DERP_HOST \
     --certmode=manual \
     --certdir=$DERP_CERTS \
