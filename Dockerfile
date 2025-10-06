@@ -64,7 +64,7 @@ COPY --from=builder /app/derper /app/derper
 RUN chmod +x /app/derper /app/build_cert.sh
 
 # Build self-signed certs && start derper with enhanced security
-CMD /app/build_cert.sh $DERP_HOST $DERP_CERTS /app/cert.conf && \
+CMD /app/build_cert.sh $DERP_HOST $DERP_CERTS /app/san.conf && \
     /app/derper --hostname=$DERP_HOST \
     --certmode=manual \
     --certdir=$DERP_CERTS \
