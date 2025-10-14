@@ -9,13 +9,6 @@ ENV CGO_ENABLED=0 \
 
 WORKDIR /app
 
-# Install git needed for cloning
-
-# Only for China mainland users: Use mirror to download
-# RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list.d/debian.sources
-
-RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
-
 # Clone the latest tailscale repository
 
 # Only for China mainland users: Use mirror to download
