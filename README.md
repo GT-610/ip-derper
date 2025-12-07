@@ -1,6 +1,6 @@
-# IP Derper
+# Tailscale IP Derper
 
-A Tailscale DERP server docker image, using self-signed certificates for servers without domains.
+A [Tailscale](https://github.com/tailscale/tailscale) DERP server docker image, using self-signed certificates for servers without domains.
 
 ## Features
 
@@ -84,3 +84,5 @@ Contributions are welcome! Please fork the repository and submit a pull request 
 ## License
 
 This project is licensed under the [Apache License 2.0](LICENSE).
+
+Usage of [Tailscale code](https://github.com/tailscale/tailscale) is licensed under its respective license.
