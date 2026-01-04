@@ -32,9 +32,9 @@ WORKDIR /app
 ENV DERP_ADDR :443
 ENV DERP_HTTP_PORT 80
 ENV DERP_HOST=127.0.0.1
-ENV DERP_CERTS=/app/certs
 ENV DERP_STUN true
 ENV DERP_VERIFY_CLIENTS false
+ENV DERP_SELF_CERT true
 # ==========================
 
 # Install only necessary packages
@@ -45,8 +45,8 @@ ENV DERP_VERIFY_CLIENTS false
 # Prepare certs directory
 RUN apk --no-cache add openssl \
     && rm -rf /var/cache/apk/* && \
-    mkdir -p $DERP_CERTS && \
-    chmod 700 $DERP_CERTS
+    mkdir -p /app/certs && \
+    chmod 700 /app/certs
 
 # Copy necessary files
 COPY build_cert.sh /app/
@@ -56,10 +56,12 @@ COPY --from=builder /app/derper /app/derper
 RUN chmod +x /app/derper /app/build_cert.sh
 
 # Build self-signed certs && start derper with enhanced security
-CMD /app/build_cert.sh $DERP_HOST $DERP_CERTS /app/san.conf && \
+CMD if [ "${DERP_SELF_CERT}" = "true" ]; then \
+        /app/build_cert.sh $DERP_HOST /app/certs /app/san.conf; \
+    fi && \
     /app/derper --hostname=$DERP_HOST \
     --certmode=manual \
-    --certdir=$DERP_CERTS \
+    --certdir=/app/certs \
     --stun=$DERP_STUN \
     --a=$DERP_ADDR \
     --http-port=$DERP_HTTP_PORT \
