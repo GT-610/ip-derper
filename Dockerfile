@@ -16,9 +16,9 @@ WORKDIR /app
 #     go env -w GOPROXY=https://goproxy.cn,direct
 
 # Only for China mainland users: Use mirror to download
-# RUN git clone https://gh.llkk.cc/https://github.com/tailscale/tailscale.git
+# RUN git clone --depth 1 --branch main https://gh.llkk.cc/https://github.com/tailscale/tailscale.git
 
-RUN git clone https://github.com/tailscale/tailscale.git && \
+RUN git clone --depth 1 --branch main https://github.com/tailscale/tailscale.git && \
     cd tailscale/cmd/derper && \
     go build -buildvcs=false -ldflags "-s -w" -o /app/derper
 
