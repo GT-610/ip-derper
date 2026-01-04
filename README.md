@@ -4,9 +4,8 @@ A [Tailscale](https://github.com/tailscale/tailscale) DERP server docker image, 
 
 ## Features
 
-- Sync up with latest official code
+- Sync up with latest Tailscale code
 - Automatic self-signed certificate generation
-- Ready for Docker
 - Easy to configure
 
 ## Prerequisites
@@ -26,6 +25,24 @@ docker pull ghcr.io/gt-610/ip-derper:latest
 docker run -d --name ip-derper -p 443:443 -p 3478:3478/udp ghcr.io/gt-610/ip-derper:latest
 ```
 
+### Use with Docker Compose / Podman Compose
+An example `docker-compose.yml` file should look like this:
+
+```yaml
+services:
+  derper:
+    image: ghcr.io/gt-610/ip-derper:latest
+    container_name: derper # Or your favorite
+    restart: unless-stopped
+    ports:
+      - "443:443" # DERP server port
+      - "3478:3478/udp" # STUN port
+    environment:
+      - DERP_HOST=127.0.0.1 # Change this to your server's public internet IP
+      - DERP_ADDR=:443 # No need to modify
+      - DERP_CERTS=/app/certs # No need to modify
+      - DERP_VERIFY_CLIENTS=false # If you don't want other clients to use this DERP, add your server to your Tailnet and set it to true
+```
 
 ### Manual Compilation
 
@@ -39,25 +56,24 @@ docker build -t ip-derper .
 
 ## Configuration
 
-The DERP server can be configured through environment variables or command-line arguments:
-
-### Environment Variables
+The DERP server can be configured through environment variables:
 
 | Environment Variable | Description | Optional/Required | Allowed Values |
 | --- | --- | --- | --- |
 | `DERP_ADDR` | Advertised port for the DERP server | **Required** | port with a colon (e.g., `:443`) |
 | `DERP_HOST` | The hostname for the DERP server (optional, IP or domain) | Optional | Valid IP address or domain name (e.g., `192.168.1.100` or `example.com`) |
 | `DERP_STUN` | Enable STUN service | **Required** | `true` or `false` |
-| `DERP_VERIFY_CLIENTS` | Verify client certificates | **Required** | `true` or `false` |
+| `DERP_VERIFY_CLIENTS` | Whether to allow other clients to use this DERP server | **Required** | `true` or `false` |
 
 ## Technical Details
 
 ### Dockerfile
 
-The included Dockerfile builds a minimal image based on Alpine Linux. Key features:
+The included Dockerfile builds a minimal image based on Alpine Linux. It will:
 
-- Automatic certificate generation using the included `build_cert.sh` script
-- Optimized for size and performance
+- Download Tailscale DERP server code from GitHub and compile DERP server binary
+- Automatically generate self-signed certificates using the included `build_cert.sh` script
+- Optimize for size and performance
 
 ### Certificate build script
 
@@ -72,9 +88,7 @@ The `build_cert.sh` script automatically generates self-signed certificates when
 
 The repository includes a GitHub Actions workflow for automatic Docker image publishing. It:
 
-- Builds and pushes images on pushes to the main branch
-- Creates versioned tags for semver tags (e.g., v1.2.3)
-- Pushes a `latest` tag for the main branch
+- Builds and pushes a `latest` tag image for the main branch
 - Signs images using cosign for security
 
 ## Contributing
