@@ -29,8 +29,6 @@ WORKDIR /app
 
 # ========= CONFIG =========
 # - derper args
-ENV DERP_ADDR :443
-ENV DERP_HTTP_PORT 80
 ENV DERP_HOST=127.0.0.1
 ENV DERP_STUN true
 ENV DERP_VERIFY_CLIENTS false
@@ -63,6 +61,4 @@ CMD if [ "${DERP_SELF_CERT}" = "true" ]; then \
     --certmode=manual \
     --certdir=/app/certs \
     --stun=$DERP_STUN \
-    --a=$DERP_ADDR \
-    --http-port=$DERP_HTTP_PORT \
     --verify-clients=$DERP_VERIFY_CLIENTS

@@ -45,7 +45,6 @@ services:
       - "3478:3478/udp" # STUN port
     environment:
       - DERP_HOST=127.0.0.1 # Change this to your server's public internet IP
-      - DERP_ADDR=:443 # If you're using host network, you can change this, otherwise leave it as default
       - DERP_VERIFY_CLIENTS=false # If you don't want other clients to use this DERP, add your server to your Tailnet and set it to true
 ```
 
@@ -54,7 +53,12 @@ services:
 Let's Encrypt now [supports IP certificates](https://letsencrypt.org/2025/07/01/issuing-our-first-ip-address-certificate), so you can use them instead of auto-generated self-signed certificates.
 
 1. Set `DERP_SELF_CERT=false` in your environment configuration
-2. Mount your certificate and key files to `/app/certs` in the container
+2. Mount your certificate as `/app/certs/<DERP_HOST>.crt`
+3. Mount your private key as `/app/certs/<DERP_HOST>.key`
+
+Note that you should replace `<DERP_HOST>` with what you set in `DERP_HOST` environment variable.
+
+(e.g., if you set `DERP_HOST=192.168.1.100`, you should mount into `/app/certs/192.168.1.100.crt` and `/app/certs/192.168.1.100.key`).
 
 Example with your own certificates:
 
@@ -68,11 +72,11 @@ services:
       - "443:443"
       - "3478:3478/udp"
     environment:
-      - DERP_HOST=127.0.0.1 # Change this to your server's public internet IP
-      # ... other configurations
+      - DERP_HOST=127.0.0.1 # Your server's public IP
       - DERP_SELF_CERT=false
     volumes:
-      - path/to/your/certs:/app/certs # Mount your certificate directory
+      - /path/to/your/cert.crt:/app/certs/127.0.0.1.crt # CER file (/path/to/your/cert.cer) is also supported, but you should mount as /app/certs/127.0.0.1.crt
+      - /path/to/your/key.key:/app/certs/127.0.0.1.key
 ```
 
 
@@ -92,7 +96,6 @@ The DERP server can be configured through environment variables:
 
 | Environment Variable | Description | Optional/Required | Allowed Values |
 | --- | --- | --- | --- |
-| `DERP_ADDR` | Advertised port for the DERP server | **Required** | port with a colon (e.g., `:443`) |
 | `DERP_HOST` | The hostname for the DERP server (optional, IP or domain) | Optional | Valid IP address or domain name (e.g., `192.168.1.100` or `example.com`) |
 | `DERP_STUN` | Enable STUN service | **Required** | `true` or `false` |
 | `DERP_VERIFY_CLIENTS` | Whether to allow other clients to use this DERP server | **Required** | `true` or `false` |
