@@ -2,9 +2,15 @@
 
 A [Tailscale](https://github.com/tailscale/tailscale) DERP server docker image, using self-signed certificates for servers without domains.
 
+<p align="center">
+  <a href="https://github.com/GT-610/ip-derper/actions/workflows/docker-publish.yml"><img src="https://github.com/GT-610/ip-derper/actions/workflows/docker-publish.yml/badge.svg" alt="Docker"></a>
+  <img src="https://img.shields.io/github/license/GT-610/ip-derper" alt="GitHub License">
+</p>
+
+
 ## Features
 
-- Sync up with latest Tailscale code
+- Rolling release with latest Tailscale code
 - Automatic self-signed certificate generation
 - Easy to configure
 

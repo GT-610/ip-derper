@@ -18,8 +18,8 @@ WORKDIR /app
 # Only for China mainland users: Use mirror to download
 # RUN git clone https://gh.llkk.cc/https://github.com/tailscale/tailscale.git
 
-RUN git clone https://github.com/tailscale/tailscale.git
-RUN cd tailscale/cmd/derper && \
+RUN git clone https://github.com/tailscale/tailscale.git && \
+    cd tailscale/cmd/derper && \
     go build -buildvcs=false -ldflags "-s -w" -o /app/derper
 
 # Runtime stage with minimal Alpine image
@@ -42,11 +42,10 @@ ENV DERP_VERIFY_CLIENTS false
 # Only for China mainland users: Use mirror to download
 # RUN sed -i 's#https\?://dl-cdn.alpinelinux.org/alpine#https://mirrors.aliyun.com/alpine#g' /etc/apk/repositories
 
+# Prepare certs directory
 RUN apk --no-cache add openssl \
-    && rm -rf /var/cache/apk/*
-
-# Create certs directory
-RUN mkdir -p $DERP_CERTS && \
+    && rm -rf /var/cache/apk/* && \
+    mkdir -p $DERP_CERTS && \
     chmod 700 $DERP_CERTS
 
 # Copy necessary files
