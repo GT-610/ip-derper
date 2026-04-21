@@ -1,3 +1,5 @@
+[简体中文](README.cn.md)
+
 # Tailscale IP Derper
 
 A [Tailscale](https://github.com/tailscale/tailscale) DERP server docker image, using self-signed certificates for servers without domains.
